@@ -1,0 +1,27 @@
+[package]
+name = "masto-id-convert"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[[bench]]
+name = "process"
+harness = false
+
+[dependencies]
+lexical = { version = "6.1.1", default-features = false, features = [
+    "parse-integers",
+] }
+nanorand = { version = "0.7.0", default-features = false, features = [
+    "wyrand",
+] }
+uuid = { version = "1.3.2", default-features = false }
+
+[features]
+default = ["std"]
+std = []
+
+[dev-dependencies]
+criterion = { version = "0.4.0", default-features = false }
+time = "0.3.21"
+uuid = { version = "1.3.2", features = ["v7"] }

@@ -1,0 +1,36 @@
+name: Check
+on:
+  pull_request:
+  push:
+    branches: main
+
+jobs:
+  ensure_no-std:
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          targets: "thumbv7em-none-eabi"
+          toolchain: "stable"
+      - run: cargo check --no-default-features --target thumbv7em-none-eabi
+
+  check:
+      runs-on: "ubuntu-latest"
+      steps:
+        - uses: actions/checkout@v3
+        - uses: dtolnay/rust-toolchain@master
+          with:
+            toolchain: "stable"
+        - uses: taiki-e/install-action@cargo-hack
+        - run: cargo hack check --feature-powerset
+  
+  test:
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: "stable"
+      - uses: taiki-e/install-action@cargo-hack
+      - run: cargo hack test --feature-powerset
