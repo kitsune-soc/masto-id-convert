@@ -53,18 +53,10 @@ impl fmt::Display for Error {
 #[cfg(feature = "std")]
 impl std::error::Error for Error {}
 
-/// Process the Mastodon snowflake into a UUID v7 identifier
-///
-/// # Errors
-///
-/// - Parsing the Mastodon snowflake into a u64 failed
+/// Process a Mastodon snowflake in its u64 representation into a UUID v7 identifier
 #[inline]
-pub fn process<T>(masto_id: T) -> Result<Uuid, Error>
-where
-    T: AsRef<[u8]>,
-{
-    let masto_id: u64 = lexical::parse(masto_id)?;
-
+#[must_use]
+pub fn process_u64(masto_id: u64) -> Uuid {
     let timestamp_ms = (masto_id >> 16) & 0xFF_FF_FF_FF_FF_FF;
     let sequence_data = masto_id & 0xFF_FF;
     let mut wyrand = WyRand::new_seed(sequence_data);
@@ -80,5 +72,20 @@ where
     raw_uuid[6] = (raw_uuid[6] & 0x0F) | 0x70;
     raw_uuid[8] = (raw_uuid[8] & 0x3F) | 0x80;
 
-    Ok(Uuid::from_bytes(raw_uuid))
+    Uuid::from_bytes(raw_uuid)
+}
+
+/// Process an ASCII-encoded Mastodon snowflake into a UUID v7 identifier
+///
+/// # Errors
+///
+/// - Parsing the Mastodon snowflake into a u64 failed
+#[inline]
+pub fn process<T>(masto_id: T) -> Result<Uuid, Error>
+where
+    T: AsRef<[u8]>,
+{
+    lexical::parse(masto_id)
+        .map(process_u64)
+        .map_err(Error::from)
 }
