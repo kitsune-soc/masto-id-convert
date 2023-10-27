@@ -1,5 +1,13 @@
 # masto-id-convert
 
+---
+
+# ⚠ MOVED
+
+This crate moved into the [Kitsune monorepo](https://github.com/kitsune-soc/kitsune/tree/main/lib/masto-id-convert)
+
+---
+
 Convert a Mastodon snowflake ID into a UUID v7 while preserving the timestamp component. Fast.
 
 ## How?
